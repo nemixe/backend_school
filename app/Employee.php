@@ -6,22 +6,25 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notifiable;
 use Laravel\Lumen\Auth\Authorizable;
 
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Model implements AuthenticatableContract, AuthorizableContract, JWTSubject
-{
+use App\Role;
+use App\Lesson;
+use App\Student;
 
-    use Notifiable;
+class Employee extends Model implements AuthenticatableContract, AuthorizableContract, JWTSubject
+{
+    use Authenticatable, Authorizable;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'email',
+        'full_name', 'nip',
     ];
 
     /**
@@ -51,5 +54,15 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
+
+    public function lessons()
+    {
+        return $this->belongsToMany(Lesson::class);
     }
 }

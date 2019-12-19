@@ -6,22 +6,28 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notifiable;
 use Laravel\Lumen\Auth\Authorizable;
 
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Model implements AuthenticatableContract, AuthorizableContract, JWTSubject
-{
+use App\Employee;
+use App\Role;
 
-    use Notifiable;
+// class Student extends Model implements AuthenticatableContract, AuthorizableContract, JWTSubject
+// {
+//     use Authenticatable, Authorizable;
+class Student extends Model implements AuthenticatableContract, AuthorizableContract, JWTSubject
+{
+    use Authenticatable, Authorizable;
+
+    protected $table = "elearning_students";
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'email',
+        'full_name', 'nis',
     ];
 
     /**
@@ -32,6 +38,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $hidden = [
         'password',
     ];
+
+    protected $columns = array('id','employee_id','full_name', 'nis', 'password'); // add all columns from you table
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
@@ -51,5 +59,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function employees()
+    {
+        return $this->belongsTo(Employee::class, 'employee_id');
     }
 }
